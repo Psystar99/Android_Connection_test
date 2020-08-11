@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,26 +25,37 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextViewResult;
+    ArrayList<String> name_a=new ArrayList<>();
+    ArrayList<String> path_a=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //임시로 테스트할 어레이리스트
+        name_a.add("tigertest.jpg");
+        name_a.add("liontest.jpg");
+        path_a.add("/sdcard/Pictures/tigertest.jpg");
+        path_a.add("/sdcard/Pictures/liontest.jpg");
+
+
         mTextViewResult = findViewById(R.id.text_view_result);
 //a. Setup the http request: okhttp3.OkHttpClient
-        //OkHttpClient client = new OkHttpClient();
+
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
-        //String url = "https://reqres.in/api/users?page=2";
-        String url="http://192.168.1.196:5000/api/pictures/";
+        String url="http://192.168.219.102:5000/api/pictures/";
 
 //b. Make the request: okhttp3.Request
-        // Request request = new Request.Builder().url(url).build();
+
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("picture","liontest.jpg",
+                .addFormDataPart("picture",name_a.get(0),
                         RequestBody.create(MediaType.parse("application/octet-stream"),
-                                new File("/sdcard/Pictures/liontest.jpg")))
+                                new File(path_a.get(0))))
+                .addFormDataPart("picture",name_a.get(1),
+                        RequestBody.create(MediaType.parse("application/octet-stream"),
+                                new File(path_a.get(1))))
                 .build();
 
         Request request = new Request.Builder()
@@ -62,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 //System.out.println("response body is"+response.body().string());
+                Log.d("연결 성", "error Connect Server error is");
+
                 if (response.isSuccessful()) {
                     // final String myResponse = response.body().string();
                     try {
