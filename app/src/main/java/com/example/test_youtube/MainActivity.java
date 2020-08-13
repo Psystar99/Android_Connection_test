@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //임시로 테스트할 어레이리스트
-        name_a.add("tigertest.jpg");
-        name_a.add("liontest.jpg");
-        path_a.add("/sdcard/Pictures/tigertest.jpg");
-        path_a.add("/sdcard/Pictures/liontest.jpg");
+        name_a.add("blackhead.jpg");
+        name_a.add("whitehead.jpg");
+        path_a.add("/sdcard/Pictures/blackhead.jpg");
+        path_a.add("/sdcard/Pictures/whitehead.jpg");
 
 
         mTextViewResult = findViewById(R.id.text_view_result);
@@ -45,15 +45,15 @@ public class MainActivity extends AppCompatActivity {
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
-        String url="http://192.168.219.102:5000/api/pictures/";
+        String url="http://%%%%%:5000/api/acnes";//your_own_ip
 
 //b. Make the request: okhttp3.Request
 
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("picture",name_a.get(0),
+                .addFormDataPart("acne",name_a.get(0),
                         RequestBody.create(MediaType.parse("application/octet-stream"),
                                 new File(path_a.get(0))))
-                .addFormDataPart("picture",name_a.get(1),
+                .addFormDataPart("acne",name_a.get(1),
                         RequestBody.create(MediaType.parse("application/octet-stream"),
                                 new File(path_a.get(1))))
                 .build();
@@ -73,9 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                //System.out.println("response body is"+response.body().string());
-                Log.d("연결 성", "error Connect Server error is");
-
                 if (response.isSuccessful()) {
                     // final String myResponse = response.body().string();
                     try {
@@ -84,7 +81,10 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 try {
-                                    mTextViewResult.setText(jsonObject.getString("predicted_label"));
+
+                                    String predicted_label=jsonObject.getString("predicted_label");
+                                    mTextViewResult.setText("whitehead:1, balckhead:2, papule:3, pustule:4, warning:5:    "+predicted_label);//지금은 화면 값이지만 이값을 리턴하는 걸
+                                    //    mTextViewResult.setText(jsonObject.getString("predicted_label"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
